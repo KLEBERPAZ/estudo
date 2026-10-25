@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>200 Questões - Licitação, Contratos e Convênios</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 20px; color: #222;
+  }
+  .container {
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    width: 100%; max-width: 820px; padding: 35px 40px;
+  }
+  .header { display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 22px; }
+  .header h1 { font-size: 1.05rem; color: #2a5298; }
+  .counter { background: #2a5298; color: #fff; padding: 6px 16px;
+    border-radius: 20px; font-size: .9rem; font-weight: 600; white-space: nowrap; }
+  .question { font-size: 1.15rem; font-weight: 600; line-height: 1.55;
+    color: #1a202c; min-height: 90px; margin-bottom: 18px; }
+  .answer-box { background: #f0f7ff; border-left: 5px solid #2a5298;
+    border-radius: 8px; padding: 16px 18px; font-size: 1rem;
+    line-height: 1.6; color: #1a365d; }
+  .answer-box strong { color: #2a5298; display: block; margin-bottom: 6px;
+    font-size: .85rem; text-transform: uppercase; letter-spacing: .8px; }
+  .nav { display: flex; justify-content: space-between; align-items: center;
+    margin-top: 28px; gap: 12px; }
+  button { background: #2a5298; color: #fff; border: none; padding: 12px 26px;
+    border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background .2s; font-family: inherit; }
+  button:hover:not(:disabled) { background: #1e3c72; }
+  button:disabled { background: #cbd5e0; cursor: not-allowed; }
+  .hint { text-align: center; margin-top: 18px; font-size: .85rem; color: #718096; }
+  .hint kbd { background: #edf2f7; border: 1px solid #cbd5e0;
+    border-radius: 5px; padding: 2px 7px; font-family: monospace; }
+  @media (max-width: 600px) { .container { padding: 24px 20px; }
+    .question { font-size: 1rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Licitação, Contratos e Convênios</h1>
+    <div class="counter" id="counter">1 / 200</div>
+  </div>
+  <div class="question" id="question"></div>
+  <div class="answer-box">
+    <strong>Resposta</strong>
+    <span id="answer"></span>
+  </div>
+  <div class="nav">
+    <button id="prevBtn" onclick="prev()">← Anterior</button>
+    <button id="nextBtn" onclick="next()">Próxima →</button>
+  </div>
+  <div class="hint">Use as teclas <kbd>←</kbd> e <kbd>→</kbd> do navegador</div>
+</div>
+
+<script>
+const questoes = [
+{q:"O que é licitação?",r:"É o procedimento administrativo pelo qual a Administração Pública seleciona a proposta mais vantajosa para contratar, observando os princípios constitucionais e legais."},
+{q:"Qual é a lei geral que rege as licitações e contratos da Administração Pública?",r:"A Lei nº 14.133/2021 (Nova Lei de Licitações), que substituiu a Lei 8.666/93, a Lei 10.520/02 (Pregão) e parte da Lei 12.462/11 (RDC)."},
+{q:"Quais são os princípios básicos da licitação?",r:"Legalidade, impessoalidade, moralidade, publicidade, eficiência, interesse público, probidade administrativa, igualdade, competitividade, economicidade, transparência e vinculação ao edital."},
+{q:"O que é o edital de licitação?",r:"É o instrumento convocatório que estabelece as regras, condições, critérios e exigências do procedimento licitatório."},
+{q:"Quais são as modalidades de licitação previstas na Lei 14.133/2021?",r:"Pregão, concorrência, concurso, leilão e diálogo competitivo."},
+{q:"O que é pregão?",r:"Modalidade de licitação obrigatória para bens e serviços comuns, cujo critério de julgamento é o menor preço ou maior desconto, com disputa em sessão pública."},
+{q:"O que é concorrência?",r:"Modalidade de licitação para contratação de bens e serviços especiais e de obras e serviços comuns de engenharia."},
+{q:"O que é concurso?",r:"Modalidade de licitação para escolha de trabalho técnico, científico ou artístico, mediante instituição de prêmios ou remuneração aos vencedores."},
+{q:"O que é leilão?",r:"Modalidade de licitação para alienação de bens imóveis ou de móveis inservíveis, com critério de maior lance."},
+{q:"O que é diálogo competitivo?",r:"Modalidade de licitação para contratação de soluções inovadoras ou complexas, em que a Administração dialoga com licitantes previamente selecionados."},
+{q:"Quais são os critérios de julgamento previstos na Nova Lei de Licitações?",r:"Menor preço, maior desconto, melhor técnica ou conteúdo artístico, técnica e preço, maior lance (leilão) e maior retorno econômico."},
+{q:"O que é contrato administrativo?",r:"É o ajuste entre a Administração Pública e terceiros, regido por cláusulas exorbitantes e pelo direito público, para execução de obras, serviços, compras ou alienações."},
+{q:"Quais são as cláusulas exorbitantes dos contratos administrativos?",r:"Prerrogativas da Administração como alteração unilateral, rescisão unilateral, fiscalização, aplicação de sanções e ocupação provisória de bens."},
+{q:"O que é convênio?",r:"É o acordo entre entes públicos ou entre ente público e entidade privada sem fins lucrativos, para realização de interesses comuns, com mútua cooperação."},
+{q:"Qual a principal diferença entre contrato e convênio?",r:"No contrato há interesses contrapostos e remuneração; no convênio há interesses convergentes e cooperação mútua sem contraprestação."},
+{q:"O que é dispensa de licitação?",r:"É a hipótese legal em que a licitação é formalmente dispensável, embora possível, por conveniência administrativa prevista em lei."},
+{q:"O que é inexigibilidade de licitação?",r:"Ocorre quando há inviabilidade de competição, como na contratação de fornecedor exclusivo ou de profissional de notória especialização."},
+{q:"Qual o prazo de vigência dos contratos administrativos pela Lei 14.133/2021?",r:"Em regra, até 5 anos, podendo ser prorrogado mediante justificativa, respeitados os limites legais para serviços continuados (até 10 anos)."},
+{q:"O que é termo de referência?",r:"Documento que define o objeto, as especificações técnicas, as condições de execução e os critérios de julgamento para contratação de bens ou serviços."},
+{q:"O que é projeto básico?",r:"Conjunto de elementos que define a obra ou serviço de engenharia, com nível de precisão suficiente para caracterizar o objeto e permitir a elaboração da proposta."},
+{q:"O que é projeto executivo?",r:"Conjunto de elementos necessários e suficientes à execução completa da obra, detalhando todas as etapas e soluções técnicas."},
+{q:"Quem pode participar de licitação?",r:"Qualquer interessado que atenda às exigências do edital, observadas as vedações legais (ex.: impedimentos por sanções ou conflito de interesses)."},
+{q:"O que é habilitação em licitação?",r:"É a fase em que se verifica a capacidade jurídica, técnica, fiscal, social e econômico-financeira do licitante."},
+{q:"Quais são as fases do procedimento licitatório na Lei 14.133/2021?",r:"Preparatória, divulgação do edital, apresentação de propostas e lances, julgamento, habilitação, recursal, homologação e adjudicação."},
+{q:"O que é adjudicação?",r:"É o ato pelo qual a Administração atribui ao vencedor o objeto da licitação, após a homologação."},
+{q:"O que é homologação?",r:"É o ato da autoridade competente que confirma o resultado da licitação e autoriza a contratação."},
+{q:"O que é impugnação de edital?",r:"É o instrumento pelo qual qualquer cidadão ou licitante questiona irregularidades no edital, no prazo legal."},
+{q:"Qual o prazo para impugnação de edital na Nova Lei de Licitações?",r:"Até 3 dias úteis antes da data de abertura do certame."},
+{q:"O que é recurso administrativo em licitação?",r:"É o instrumento para contestar decisões da comissão ou autoridade durante o procedimento licitatório."},
+{q:"O que é sanção administrativa em licitação?",r:"É a penalidade aplicada ao licitante ou contratado por descumprimento de obrigações, como advertência, multa, impedimento ou declaração de inidoneidade."},
+{q:"O que é declaração de inidoneidade?",r:"Sanção que impede o licitante de contratar com a Administração Pública por até 3 anos, aplicada por irregularidades graves."},
+{q:"O que é impedimento de licitar e contratar?",r:"Sanção que veda a participação em licitações e contratações por até 3 anos, conforme a infração."},
+{q:"O que é garantia contratual?",r:"É a caução oferecida pelo contratado para assegurar o cumprimento das obrigações contratuais, limitada a 5% ou 10% do valor do contrato, conforme o caso."},
+{q:"O que é fiscalização de contratos?",r:"É a atividade da Administração para acompanhar a execução contratual, verificando o cumprimento das obrigações pelo contratado."},
+{q:"O que é gestor de contratos?",r:"Servidor designado para coordenar as atividades administrativas relacionadas à execução do contrato."},
+{q:"O que é fiscal de contratos?",r:"Servidor designado para acompanhar e fiscalizar diretamente a execução do contrato."},
+{q:"O que é reajuste de preços?",r:"É a atualização monetária dos valores contratuais em razão da variação de índices, conforme previsão no edital e no contrato."},
+{q:"O que é revisão de preços?",r:"É a alteração do valor contratual por fatos imprevisíveis ou supervenientes que alterem o equilíbrio econômico-financeiro."},
+{q:"O que é equilíbrio econômico-financeiro do contrato?",r:"É a relação entre as obrigações do contratado e a remuneração, que deve ser mantida durante toda a execução contratual."},
+{q:"O que é alteração unilateral do contrato?",r:"É a prerrogativa da Administração de modificar cláusulas de execução ou o objeto, respeitados os limites legais (25% ou 50% para reforma)."},
+{q:"Qual o limite para acréscimos e supressões em contratos de obras e compras?",r:"Em regra, até 25% do valor inicial; para reformas de edifício ou equipamento, até 50%."},
+{q:"O que é rescisão contratual?",r:"É a extinção do contrato antes do término, por acordo, por determinação da Administração ou por descumprimento."},
+{q:"Quais são as formas de rescisão do contrato administrativo?",r:"Unilateral (por interesse público ou descumprimento), consensual (por acordo) e judicial."},
+{q:"O que é convênio público?",r:"Acordo entre entes federativos ou entre a Administração e entidades privadas sem fins lucrativos para cooperação mútua em prol do interesse público."},
+{q:"Qual é a lei que disciplina os convênios com a União?",r:"A Lei nº 13.019/2014 (Marco Regulatório das Organizações da Sociedade Civil) e o Decreto nº 6.170/2007, entre outras normas."},
+{q:"O que é plano de trabalho em convênio?",r:"Documento que detalha o objeto, as metas, a aplicação dos recursos e o cronograma do convênio."},
+{q:"O que é contrapartida em convênio?",r:"É a participação financeira ou em bens e serviços do convenente, prevista no plano de trabalho."},
+{q:"O que é prestação de contas de convênio?",r:"É a apresentação, pelo convenente, da documentação comprobatória da aplicação dos recursos recebidos."},
+{q:"O que é termo de parceria?",r:"É o instrumento firmado entre o Poder Público e as Organizações da Sociedade Civil de Interesse Público (OSCIP) para fomento e execução de projetos."},
+{q:"O que é contrato de gestão?",r:"É o instrumento firmado entre o Poder Público e organizações sociais para a execução de atividades públicas não exclusivas."},
+{q:"O que é chamamento público?",r:"É o procedimento para selecionar organizações da sociedade civil interessadas em firmar parcerias com a Administração."},
+{q:"Quais são os tipos de parceria previstos na Lei 13.019/2014?",r:"Termo de fomento, termo de colaboração e acordo de cooperação."},
+{q:"O que é termo de fomento?",r:"Parceria em que a Administração apoia projeto proposto pela organização da sociedade civil."},
+{q:"O que é termo de colaboração?",r:"Parceria em que a Administração propõe o projeto e a organização da sociedade civil executa."},
+{q:"O que é acordo de cooperação?",r:"Parceria sem transferência de recursos financeiros, para mútua cooperação entre as partes."},
+{q:"O que é plano de trabalho em parceria da Lei 13.019/2014?",r:"Documento que descreve o objeto, metas, indicadores, cronograma e aplicação dos recursos da parceria."},
+{q:"O que é conta bancária específica em convênio?",r:"Conta exclusiva para movimentação dos recursos do convênio, vedada a mistura com recursos próprios."},
+{q:"O que é ingerência indevida em convênio?",r:"É a interferência do concedente na gestão do convenente além dos limites legais, o que é vedado."},
+{q:"O que é denúncia em convênio?",r:"É a comunicação de irregularidades ou descumprimento das obrigações do convênio aos órgãos de controle."},
+{q:"O que é tomada de contas especial?",r:"É o procedimento para apurar danos ao erário quando não há prestação de contas ou há irregularidades em convênios."},
+{q:"O que é certame licitatório?",r:"É o conjunto de atos do procedimento licitatório, desde a publicação do edital até a homologação."},
+{q:"O que é comissão de contratação?",r:"É o colegiado designado para conduzir o procedimento licitatório e julgar as propostas."},
+{q:"O que é agente de contratação?",r:"Servidor designado para conduzir a licitação, tomar decisões e executar as ações necessárias ao bom andamento do certame."},
+{q:"O que é estudo técnico preliminar (ETP)?",r:"Documento que evidencia a necessidade da contratação e define a melhor solução, embasando o termo de referência ou projeto."},
+{q:"O que é matriz de riscos?",r:"Instrumento contratual que define a alocação de riscos entre as partes, utilizada em contratações de maior complexidade."},
+{q:"O que é seguro-garantia?",r:"É a modalidade de garantia contratual que cobre riscos de inadimplemento do contratado, podendo chegar a 30% do valor do contrato em obras."},
+{q:"O que é contratação integrada?",r:"Regime em que o contratado elabora o projeto básico e executivo e realiza a obra, com responsabilidade integral pelo resultado."},
+{q:"O que é contratação semi-integrada?",r:"Regime em que o contratado elabora o projeto executivo com base no projeto básico fornecido pela Administração e executa a obra."},
+{q:"O que é empreitada por preço global?",r:"Regime de execução em que o contratado recebe valor fixo pela execução completa da obra ou serviço."},
+{q:"O que é empreitada por preço unitário?",r:"Regime em que o contratado recebe por unidade de medida executada, conforme quantitativos do projeto."},
+{q:"O que é tarefa em licitação?",r:"Regime de execução para pequenos serviços ou obras, com remuneração por tarefa concluída."},
+{q:"O que é registro de preços?",r:"É o procedimento para registro de preços de bens ou serviços em ata, permitindo contratações futuras sem nova licitação."},
+{q:"O que é ata de registro de preços?",r:"Documento que formaliza os preços registrados e as condições para contratações futuras pelos órgãos participantes."},
+{q:"O que é órgão gerenciador de ata de registro de preços?",r:"Órgão responsável pela condução do procedimento de registro de preços e pela gestão da ata."},
+{q:"O que é órgão participante de ata de registro de preços?",r:"Órgão que adere ao procedimento de registro de preços e pode utilizar a ata para suas contratações."},
+{q:"O que é carona em registro de preços?",r:"É a adesão de órgão não participante à ata de registro de preços, nos limites legais."},
+{q:"O que é contrato verbal na Administração Pública?",r:"Em regra é vedado, salvo pequenas compras de pronto pagamento (dispensa), conforme a lei."},
+{q:"O que é nota de empenho?",r:"Documento que reserva dotação orçamentária para fazer face a despesa autorizada, podendo substituir o contrato em casos legais."},
+{q:"O que é ordem de serviço?",r:"Documento que autoriza o início da execução do objeto contratado."},
+{q:"O que é recebimento provisório?",r:"É a etapa em que o objeto é recebido para verificação e conferência, antes do recebimento definitivo."},
+{q:"O que é recebimento definitivo?",r:"É a etapa em que o objeto é aceito em definitivo pela Administração, após verificação de conformidade."},
+{q:"O que é vício oculto no contrato administrativo?",r:"É o defeito não aparente que surge após o recebimento, cuja responsabilidade pode recair sobre o contratado."},
+{q:"O que é responsabilidade solidária em licitação?",r:"É a responsabilidade conjunta de licitantes ou contratados por infrações ou danos, conforme o caso."},
+{q:"O que é consórcio de empresas em licitação?",r:"É a união de empresas para participar de licitação, com responsabilidade solidária pelas obrigações."},
+{q:"O que é subcontratação em contrato administrativo?",r:"É a transferência parcial da execução do objeto a terceiros, admitida nos limites do edital e do contrato."},
+{q:"O que é cessão de contrato?",r:"É a transferência total do contrato a terceiro, admitida excepcionalmente e com anuência da Administração."},
+{q:"O que é terceirização na Administração Pública?",r:"É a contratação de serviços por empresa especializada, com vínculo de emprego entre esta e seus empregados."},
+{q:"O que é responsabilidade subsidiária da Administração em terceirização?",r:"É a responsabilidade da Administração por encargos trabalhistas não pagos pelo contratado, quando comprovada sua culpa na fiscalização."},
+{q:"O que é fiscalização trabalhista em contratos terceirizados?",r:"É o dever da Administração de verificar o cumprimento das obrigações trabalhistas pela contratada."},
+{q:"O que é CNDT em licitação?",r:"Certidão Negativa de Débitos Trabalhistas, exigida na habilitação para comprovar regularidade trabalhista."},
+{q:"O que é certidão de regularidade fiscal?",r:"Documento que comprova a regularidade do licitante perante os fiscos federal, estadual e municipal."},
+{q:"O que é balanço patrimonial em licitação?",r:"Demonstração contábil exigida na habilitação econômico-financeira para comprovar a saúde financeira do licitante."},
+{q:"O que é atestado de capacidade técnica?",r:"Documento que comprova a experiência do licitante na execução de objeto semelhante ao licitado."},
+{q:"O que é acervo técnico?",r:"Conjunto de documentos que comprovam a capacitação técnica do licitante ou profissional."},
+{q:"O que é CAT em licitação?",r:"Certidão de Acervo Técnico, emitida pelo CREA, que comprova a experiência técnica do profissional ou empresa."},
+{q:"O que é ART em licitação?",r:"Anotação de Responsabilidade Técnica, documento que identifica o responsável técnico pela obra ou serviço."},
+{q:"O que é garantia de execução em obras?",r:"É a caução que assegura a execução da obra, podendo ser em dinheiro, seguro-garantia ou fiança bancária."},
+{q:"O que é vistoria em licitação?",r:"É a visita ao local da execução do objeto, facultativa em regra, para que o licitante conheça as condições."},
+{q:"O que é declaração de vistoria?",r:"Documento em que o licitante declara conhecer as condições locais da execução do objeto."},
+{q:"O que é proposta técnica em licitação?",r:"É a oferta que descreve a metodologia e a solução técnica para atender ao objeto licitado."},
+{q:"O que é proposta de preços?",r:"É a oferta financeira apresentada pelo licitante, com os valores para execução do objeto."},
+{q:"O que é lance em pregão?",r:"É a oferta de valor feita pelos licitantes na etapa de disputa, com redução de preço ou maior desconto."},
+{q:"O que é fase de lances?",r:"É a etapa do pregão em que os licitantes apresentam ofertas sucessivas para obter a melhor condição."},
+{q:"O que é desempate em licitação?",r:"É o critério para definir o vencedor quando há empate entre propostas, conforme a lei."},
+{q:"Quais são os critérios de desempate previstos na Nova Lei de Licitações?",r:"Bens nacionais, empresas brasileiras, microempresas e empresas de pequeno porte, entre outros."},
+{q:"O que é tratamento diferenciado para ME e EPP em licitação?",r:"É o conjunto de benefícios previstos na LC 123/2006, como preferência em empates e habilitação diferenciada."},
+{q:"O que é cota reservada para ME e EPP?",r:"É a reserva de até 25% do objeto para contratação exclusiva de microempresas e empresas de pequeno porte, em bens divisíveis."},
+{q:"O que é licitação exclusiva para ME e EPP?",r:"É a realização de licitação destinada exclusivamente à participação de microempresas e empresas de pequeno porte, nos limites legais."},
+{q:"O que é arbitragem em contratos administrativos?",r:"É o meio alternativo de solução de conflitos, admitido nos contratos da Nova Lei de Licitações, com previsão contratual."},
+{q:"O que é mediação em contratos administrativos?",r:"É a forma de solução consensual de conflitos, admitida na Nova Lei de Licitações."},
+{q:"O que é comissão de solução consensual de conflitos?",r:"É o colegiado criado para prevenir e resolver controvérsias em contratos administrativos."},
+{q:"O que é due diligence em contratação pública?",r:"É a análise prévia de riscos e da capacidade do contratado antes da contratação."},
+{q:"O que é compliance em licitação?",r:"É o conjunto de práticas de integridade e conformidade adotadas para prevenir fraudes e irregularidades."},
+{q:"O que é programa de integridade em contratos públicos?",r:"É o conjunto de mecanismos de compliance exigido de contratados em contratos de grande vulto."},
+{q:"O que é contrato de grande vulto?",r:"É o contrato cujo valor supera R$ 200 milhões, exigindo garantias e programa de integridade."},
+{q:"O que é serviço continuado em contrato administrativo?",r:"É o serviço essencial e ininterrupto, cuja interrupção prejudica a Administração, permitindo prorrogação."},
+{q:"Qual o prazo máximo de prorrogação de serviços continuados?",r:"Até 10 anos, mediante justificativa e vantajosidade econômica."},
+{q:"O que é reajuste anual em contratos administrativos?",r:"É a atualização dos valores contratuais a cada 12 meses, conforme índice previsto no edital."},
+{q:"O que é aniversário do contrato para reajuste?",r:"É a data-base para aplicação do reajuste, contada a partir da apresentação da proposta ou do orçamento."},
+{q:"O que é apostilamento contratual?",r:"É o registro simples de alterações que não modificam o objeto nem o valor do contrato, como mudança de dotação."},
+{q:"O que é termo aditivo?",r:"É o instrumento que formaliza alterações contratuais que modificam cláusulas, valor ou prazo."},
+{q:"O que é supressão de objeto contratual?",r:"É a redução do objeto por interesse da Administração, com direito à recomposição do equilíbrio econômico."},
+{q:"O que é acréscimo de objeto contratual?",r:"É o aumento do objeto, nos limites legais, com anuência do contratado."},
+{q:"O que é fato da Administração?",r:"É a conduta da Administração que impacta a execução contratual, gerando direito à revisão ou indenização."},
+{q:"O que é fato do príncipe?",r:"É ato geral do Poder Público que impacta indiretamente o contrato, gerando direito à revisão do equilíbrio."},
+{q:"O que é álea administrativa?",r:"É o risco decorrente de atos da Administração que afetam o contrato, como alterações unilaterais."},
+{q:"O que é álea econômica?",r:"É o risco decorrente de fatores de mercado que podem afetar o contrato, como variação de preços."},
+{q:"O que é álea ordinária?",r:"É o risco normal do negócio, que não gera direito à revisão contratual."},
+{q:"O que é álea extraordinária?",r:"É o risco imprevisível que justifica a revisão do contrato para restabelecer o equilíbrio."},
+{q:"O que é teoria da imprevisão?",r:"É a possibilidade de revisão contratual diante de fatos imprevisíveis que alterem o equilíbrio econômico-financeiro."},
+{q:"O que é caso fortuito e força maior?",r:"São eventos imprevisíveis e inevitáveis que podem justificar revisão ou rescisão contratual."},
+{q:"O que é multa contratual?",r:"É a sanção pecuniária aplicada ao contratado por descumprimento de obrigações contratuais."},
+{q:"O que é advertência em contrato administrativo?",r:"É a sanção mais branda, aplicada por faltas leves do contratado."},
+{q:"O que é suspensão temporária de participação em licitação?",r:"É a sanção que impede o contratado de licitar e contratar por até 3 anos."},
+{q:"O que é desconsideração da personalidade jurídica em licitação?",r:"É a possibilidade de responsabilizar sócios por irregularidades, nos termos da lei."},
+{q:"O que é responsabilidade objetiva do contratado?",r:"É a responsabilidade independentemente de culpa por danos causados à Administração ou a terceiros na execução do contrato."},
+{q:"O que é garantia de obra pública?",r:"É a obrigação do contratado de reparar defeitos da obra pelo prazo legal de garantia (em regra 5 anos)."},
+{q:"O que é recebimento da obra pelo responsável técnico?",r:"É o ato de conferência técnica da execução, atestando a conformidade com o projeto."},
+{q:"O que é diário de obra?",r:"É o registro diário das atividades, ocorrências e medições da execução da obra."},
+{q:"O que é medição de obra?",r:"É a verificação e quantificação dos serviços executados para fins de pagamento."},
+{q:"O que é cronograma físico-financeiro?",r:"É o instrumento que prevê a execução física e os desembolsos financeiros ao longo do contrato."},
+{q:"O que é aditivo de prazo?",r:"É o termo que prorroga o prazo de execução do contrato, mediante justificativa."},
+{q:"O que é paralisação de obra?",r:"É a interrupção da execução, que pode gerar direito à prorrogação ou revisão contratual."},
+{q:"O que é atraso na execução contratual?",r:"É o descumprimento do cronograma, sujeitando o contratado a sanções."},
+{q:"O que é culpa in vigilando da Administração?",r:"É a omissão no dever de fiscalizar, gerando responsabilidade subsidiária em terceirizações."},
+{q:"O que é culpa in eligendo?",r:"É a culpa na escolha do contratado, que pode gerar responsabilidade da Administração."},
+{q:"O que é responsabilidade solidária do Estado por danos?",r:"É a obrigação de reparar danos causados a terceiros por seus agentes, assegurado o direito de regresso."},
+{q:"O que é denunciação à lide em contratos administrativos?",r:"É a convocação do contratado para responder em ação judicial por danos relacionados ao contrato."},
+{q:"O que é seguro de responsabilidade civil em obras?",r:"É a apólice que cobre danos a terceiros durante a execução da obra."},
+{q:"O que é licenciamento ambiental em obras públicas?",r:"É a autorização prévia do órgão ambiental para execução de obras que causem impacto ambiental."},
+{q:"O que é estudo de impacto ambiental (EIA)?",r:"É o estudo prévio exigido para obras de significativo impacto ambiental, com relatório (RIMA)."},
+{q:"O que é sustentabilidade em licitação?",r:"É a exigência de critérios ambientais e sociais nas contratações públicas, conforme a Nova Lei."},
+{q:"O que é logística reversa em contratação pública?",r:"É a obrigação de retorno de produtos e embalagens após o uso, prevista em contratos sustentáveis."},
+{q:"O que é pregão eletrônico?",r:"É o pregão realizado por meio de sistema eletrônico, com disputa em plataforma digital."},
+{q:"O que é pregão presencial?",r:"É o pregão realizado em sessão pública física, com a presença dos licitantes."},
+{q:"O que é sistema de registro de preços para serviços?",r:"É o registro de preços de serviços para contratações futuras, conforme condições da ata."},
+{q:"O que é adesão a ata de registro de preços por órgão não participante?",r:"É o carona, limitado a 50% dos quantitativos por órgão e ao dobro do total da ata."},
+{q:"O que é catálogo eletrônico de padronização?",r:"É o instrumento que padroniza especificações de bens e serviços para contratações públicas."},
+{q:"O que é plataforma de contratações públicas?",r:"É o sistema eletrônico oficial para realização de licitações e contratações."},
+{q:"O que é PNCP?",r:"Portal Nacional de Contratações Públicas, que centraliza e divulga as contratações da Administração Pública."},
+{q:"O que é transparência em licitação?",r:"É o dever de divulgar os atos do procedimento, permitindo o controle social e a fiscalização."},
+{q:"O que é publicidade do edital?",r:"É a divulgação obrigatória do edital em veículos oficiais e no PNCP, para conhecimento dos interessados."},
+{q:"O que é sigilo das propostas?",r:"É a proteção das propostas até a fase de abertura, garantindo a competitividade do certame."},
+{q:"O que é sessão pública de licitação?",r:"É a reunião em que se realizam a abertura das propostas, a disputa e o julgamento."},
+{q:"O que é ata de sessão de licitação?",r:"É o registro dos atos praticados na sessão pública, com as decisões da comissão."},
+{q:"O que é julgamento das propostas?",r:"É a fase em que se avalia a conformidade e a vantajosidade das ofertas, conforme o critério do edital."},
+{q:"O que é classificação das propostas?",r:"É a ordenação das propostas conforme o critério de julgamento, para identificar a mais vantajosa."},
+{q:"O que é desclassificação de proposta?",r:"É a exclusão da proposta que não atende às exigências do edital."},
+{q:"O que é inabilitação de licitante?",r:"É a exclusão do licitante que não comprova os requisitos de habilitação."},
+{q:"O que é diligência em licitação?",r:"É a verificação de informações ou documentos para esclarecer dúvidas durante o procedimento."},
+{q:"O que é saneamento de falhas em licitação?",r:"É a correção de irregularidades sanáveis, desde que não prejudique a competitividade."},
+{q:"O que é proposta inexequível?",r:"É a proposta com valor incompatível com os custos de mercado, sujeita a desclassificação."},
+{q:"O que é preço de mercado em licitação?",r:"É o valor de referência obtido por pesquisa de preços, para aferir a vantajosidade das propostas."},
+{q:"O que é orçamento estimado?",r:"É o valor máximo previsto pela Administração para a contratação, sigiloso ou divulgado conforme o caso."},
+{q:"O que é pesquisa de preços?",r:"É o procedimento para estimar o valor de mercado do objeto, com base em fontes diversas."},
+{q:"O que é valor estimado da contratação?",r:"É o montante previsto pela Administração para a despesa, base para o orçamento e o julgamento."},
+{q:"O que é vantajosidade da proposta?",r:"É a condição da oferta que melhor atende ao interesse público, considerando preço e qualidade."},
+{q:"O que é economicidade em licitação?",r:"É a obtenção do melhor resultado com o menor custo, observados os padrões de qualidade."},
+{q:"O que é eficiência em licitação?",r:"É a obtenção de resultados com racionalidade e celeridade, evitando desperdícios."},
+{q:"O que é moralidade administrativa em licitação?",r:"É a observância da ética e da probidade nos atos do procedimento licitatório."},
+{q:"O que é impessoalidade em licitação?",r:"É a vedação de favoritismos e tratamentos diferenciados indevidos entre licitantes."},
+{q:"O que é competitividade em licitação?",r:"É a garantia de ampla participação de interessados, com igualdade de condições."},
+{q:"O que é vinculação ao edital?",r:"É a obrigação de a Administração e os licitantes observarem fielmente as regras do edital."},
+{q:"O que é julgamento objetivo?",r:"É a avaliação das propostas com base em critérios claros e previamente definidos no edital."},
+{q:"O que é adjudicação compulsória?",r:"É o dever de a Administração adjudicar o objeto ao vencedor, após o julgamento."},
+{q:"O que é revogação da licitação?",r:"É a extinção do procedimento por interesse público superveniente, devidamente justificado."},
+{q:"O que é anulação da licitação?",r:"É a extinção do procedimento por ilegalidade, com efeitos retroativos."},
+{q:"O que é efeito ex tunc da anulação?",r:"É o efeito retroativo da anulação, alcançando os atos praticados desde o vício."},
+{q:"O que é efeito ex nunc da revogação?",r:"É o efeito não retroativo da revogação, que alcança apenas os atos futuros."},
+{q:"O que é controle externo em licitação?",r:"É a fiscalização exercida pelo Poder Legislativo, com auxílio dos Tribunais de Contas."},
+{q:"O que é controle interno em licitação?",r:"É a fiscalização exercida pela própria Administração, por meio de seus órgãos de controle."},
+{q:"O que é auditoria em contratos públicos?",r:"É a verificação independente da regularidade e da eficiência da execução contratual."},
+{q:"O que é representação ao Tribunal de Contas?",r:"É a comunicação de irregularidades ao TC, para apuração e providências."},
+{q:"O que é denúncia ao Ministério Público em licitação?",r:"É a comunicação de ilegalidades ao MP, para adoção das medidas cabíveis."},
+{q:"O que é improbidade administrativa em licitação?",r:"É a conduta ilegal e desonesta de agentes públicos que causa dano ao erário ou viola princípios."},
+{q:"O que é conflito de interesses em licitação?",r:"É a situação em que agente público ou licitante tem interesse pessoal que possa influir no procedimento."},
+{q:"O que é vedação à participação de parentes em licitação?",r:"É a proibição de participação de pessoas ligadas a agentes públicos, para evitar favorecimento."},
+{q:"O que é nepotismo em contratação pública?",r:"É a contratação de parentes de agentes públicos, vedada por princípios constitucionais."},
+{q:"O que é fracionamento de despesa?",r:"É a divisão indevida da despesa para burlar a modalidade de licitação, o que é vedado."},
+{q:"O que é jogo de planilha em obras?",r:"É a manipulação de quantitativos e preços para obter vantagem indevida na execução contratual."},
+{q:"O que é superfaturamento?",r:"É a cobrança de valor acima do mercado, causando dano ao erário."},
+{q:"O que é sobrepreço?",r:"É a fixação de preço acima do valor de mercado na proposta ou no contrato."},
+{q:"O que é aditivo contratual irregular?",r:"É a alteração contratual sem amparo legal ou sem justificativa, sujeita a anulação."},
+{q:"O que é pagamento antecipado em contrato público?",r:"É o pagamento antes da execução, admitido excepcionalmente com garantias, conforme a lei."},
+{q:"O que é medição fraudulenta?",r:"É a declaração falsa de serviços executados para obter pagamento indevido."},
+{q:"O que é obra inacabada?",r:"É a obra não concluída no prazo, sujeita a sanções e providências da Administração."},
+{q:"O que é garantia de retenção em contrato?",r:"É a retenção de parte dos pagamentos para assegurar a execução ou a correção de defeitos."},
+{q:"O que é caução em dinheiro?",r:"É a garantia prestada por depósito em conta, para assegurar obrigações contratuais."},
+{q:"O que é fiança bancária?",r:"É a garantia prestada por instituição financeira, para assegurar obrigações contratuais."},
+{q:"O que é seguro-garantia com cláusula de retomada?",r:"É a apólice que permite à seguradora assumir a execução do contrato em caso de inadimplemento."},
+{q:"O que é contratação de serviços com dedicação exclusiva de mão de obra?",r:"É a contratação em que os empregados atuam exclusivamente no serviço contratado, com fiscalização específica."},
+{q:"O que é planilha de custos em terceirização?",r:"É o documento que detalha os custos da contratação, incluindo encargos e benefícios."},
+{q:"O que é repactuação em serviços continuados?",r:"É a revisão dos custos vinculada à variação de preços de mercado ou de convenção coletiva."},
+{q:"O que é convenção coletiva em terceirização?",r:"É o acordo sindical que estabelece direitos dos trabalhadores, impactando os custos contratuais."},
+{q:"O que é visto em nota fiscal de serviço?",r:"É o atesto de que o serviço foi prestado, condição para o pagamento."},
+{q:"O que é atesto de nota fiscal?",r:"É a declaração do fiscal de que o serviço ou bem foi recebido conforme o contrato."},
+{q:"O que é liquidação da despesa?",r:"É a verificação do direito adquirido pelo credor, com base nos documentos comprobatórios."},
+{q:"O que é empenho da despesa?",r:"É a reserva de dotação orçamentária para atender a despesa autorizada."},
+{q:"O que é pagamento por estimativa?",r:"É o pagamento baseado em previsão, admitido em casos específicos, com posterior ajuste."},
+{q:"O que é glosa de pagamento?",r:"É a retenção ou recusa de pagamento por desconformidade com o contrato."},
+{q:"O que é retenção de tributos em contrato público?",r:"É o desconto de impostos na fonte, conforme a legislação tributária."},
+{q:"O que é retenção previdenciária em contrato público?",r:"É o desconto de contribuições previdenciárias, conforme a lei."},
+{q:"O que é certidão negativa de débitos em pagamento?",r:"É a comprovação de regularidade fiscal exigida para o pagamento."},
+{q:"O que é regularidade do FGTS em contratação?",r:"É a comprovação de recolhimento do FGTS, exigida na habilitação e na execução."},
+{q:"O que é CNO em obra pública?",r:"Cadastro Nacional de Obras, que registra a obra para fins previdenciários."},
+{q:"O que é SICRO em obras públicas?",r:"Sistema de Custos Rodoviários, referência para orçamentos de obras de infraestrutura."},
+{q:"O que é SINAPI em obras públicas?",r:"Sistema Nacional de Pesquisa de Custos e Índices da Construção Civil, referência para orçamentos."},
+{q:"O que é BDI em obras públicas?",r:"Benefícios e Despesas Indiretas, componente do orçamento que cobre custos indiretos e lucro."},
+{q:"O que é curva ABC em obras?",r:"É a classificação de insumos e serviços por relevância econômica, para gestão do contrato."},
+{q:"O que é composição de preço unitário?",r:"É o detalhamento dos custos de cada serviço, com insumos, mão de obra e encargos."},
+{q:"O que é orçamento baseado em produtividade?",r:"É o orçamento que considera índices de produtividade para estimar custos e prazos."},
+{q:"O que é cronograma de desembolso?",r:"É a previsão dos pagamentos ao longo da execução contratual."},
+{q:"O que é medição por evento?",r:"É a medição baseada na conclusão de etapas ou marcos do contrato."},
+{q:"O que é recebimento por etapa?",r:"É o aceite parcial do objeto, conforme etapas concluídas do cronograma."},
+{q:"O que é termo de encerramento de contrato?",r:"É o documento que formaliza o fim do contrato e a quitação das obrigações."},
+{q:"O que é quitação contratual?",r:"É o reconhecimento do cumprimento das obrigações, com ressalvas quanto a vícios ocultos."},
+{q:"O que é responsabilidade pós-contratual?",r:"É a responsabilidade do contratado após o encerramento, por vícios ou garantias."},
+{q:"O que é prazo de garantia legal em obras?",r:"É o prazo mínimo de 5 anos para reclamação de defeitos estruturais, conforme o Código Civil."},
+{q:"O que é vício redibitório em contratação?",r:"É o defeito oculto que torna o bem impróprio ao uso, gerando direito à reparação."},
+{q:"O que é decadência em contrato administrativo?",r:"É a perda do direito de reclamar por decurso de prazo, conforme a lei."},
+{q:"O que é prescrição em contrato administrativo?",r:"É a perda da pretensão pelo decurso do prazo legal, conforme o Código Civil."},
+{q:"Qual o prazo prescricional para ações contra a Fazenda Pública?",r:"Em regra, 5 anos, conforme o Decreto 20.910/32 e o Código Civil."},
+{q:"O que é reparação de dano ao erário?",r:"É a obrigação de ressarcir o prejuízo causado à Administração, apurada em processo regular."},
+{q:"O que é ressarcimento em convênio?",r:"É a devolução de recursos mal aplicados ou não comprovados, apurada em prestação de contas."},
+{q:"O que é débito em convênio?",r:"É o valor a ser restituído ao concedente por irregularidades na aplicação dos recursos."},
+{q:"O que é parcela não comprovada em convênio?",r:"É o valor sem comprovação de aplicação, sujeito a devolução e sanções."},
+{q:"O que é desvio de finalidade em convênio?",r:"É a aplicação dos recursos em objeto diverso do plano de trabalho, configurando irregularidade."},
+{q:"O que é aplicação financeira de recursos de convênio?",r:"É a aplicação dos recursos em conta específica, com rendimentos revertidos ao objeto do convênio."},
+{q:"O que é devolução de saldo de convênio?",r:"É a restituição do saldo não utilizado ao concedente, ao final da execução."},
+{q:"O que é prorrogação de convênio?",r:"É a extensão do prazo de execução, mediante justificativa e aprovação do concedente."},
+{q:"O que é revisão de plano de trabalho em convênio?",r:"É a alteração do plano, com justificativa e anuência do concedente, sem mudar o objeto."},
+{q:"O que é suspensão de convênio?",r:"É a paralisação temporária da execução, por interesse das partes ou por irregularidades."},
+{q:"O que é rescisão de convênio?",r:"É o encerramento antecipado do convênio, por descumprimento ou interesse público."},
+{q:"O que é inadimplência em convênio?",r:"É o descumprimento das obrigações pelo convenente, sujeitando-o a sanções e devolução."},
+{q:"O que é cláusula suspensiva em convênio?",r:"É a condição que subordina a eficácia do convênio a evento futuro e incerto."},
+{q:"O que é plano de aplicação detalhado em convênio?",r:"É o detalhamento das despesas por item, vinculado ao plano de trabalho."},
+{q:"O que é natureza de despesa em convênio?",r:"É a classificação orçamentária da despesa, conforme a finalidade e o objeto."},
+{q:"O que é elemento de despesa em convênio?",r:"É o detalhamento da despesa, conforme o objeto de gasto (ex.: material, serviço)."},
+{q:"O que é fonte de recurso em convênio?",r:"É a origem dos recursos que financiam o convênio, conforme a dotação orçamentária."},
+{q:"O que é dotação orçamentária em convênio?",r:"É a autorização legislativa para a despesa, que assegura a disponibilidade de recursos."},
+{q:"O que é nota de crédito em convênio?",r:"É o documento que formaliza a transferência de recursos ao convenente."},
+{q:"O que é ordem bancária em convênio?",r:"É o instrumento de pagamento dos recursos transferidos."},
+{q:"O que é conciliação bancária em convênio?",r:"É a conferência entre os lançamentos contábeis e os extratos bancários dos recursos."},
+{q:"O que é guarda de documentos em convênio?",r:"É a obrigação de manter os documentos comprobatórios à disposição dos órgãos de controle."},
+{q:"O que é prazo de prestação de contas em convênio?",r:"É o prazo fixado para o convenente apresentar a comprovação da aplicação dos recursos."},
+{q:"O que é prestação de contas parcial em convênio?",r:"É a comprovação de parte da execução, exigida em determinadas etapas do convênio."},
+{q:"O que é prestação de contas final em convênio?",r:"É a comprovação integral da execução, ao término do convênio."},
+{q:"O que é análise técnica de prestação de contas?",r:"É a verificação da conformidade da execução e da aplicação dos recursos."},
+{q:"O que é parecer conclusivo de prestação de contas?",r:"É a manifestação do órgão sobre a regularidade ou irregularidade das contas."},
+{q:"O que é aprovação de prestação de contas?",r:"É o reconhecimento da regularidade da aplicação dos recursos."},
+{q:"O que é rejeição de prestação de contas?",r:"É a recusa da comprovação por irregularidades, sujeitando o convenente a sanções."},
+{q:"O que é devolução de recursos em convênio?",r:"É a restituição de valores ao concedente, por irregularidade ou saldo não aplicado."},
+{q:"O que é atualização monetária de débito em convênio?",r:"É a correção do valor devido, acrescido de juros, conforme a legislação."},
+{q:"O que é inscrição em dívida ativa de convênio?",r:"É o registro do débito não pago, para cobrança judicial."},
+{q:"O que é certidão de regularidade de convênio?",r:"É o documento que atesta a regularidade da prestação de contas do convenente."},
+{q:"O que é vedações em convênio?",r:"São proibições legais, como uso dos recursos para finalidade diversa ou pagamento de despesas não previstas."},
+{q:"O que é despesa de custeio em convênio?",r:"É a despesa com manutenção e funcionamento, admitida nos limites do plano de trabalho."},
+{q:"O que é despesa de capital em convênio?",r:"É a despesa com investimentos, como obras e equipamentos, conforme o objeto do convênio."},
+{q:"O que é contrapartida financeira em convênio?",r:"É a participação do convenente em dinheiro, prevista no plano de trabalho."},
+{q:"O que é contrapartida em bens e serviços em convênio?",r:"É a participação do convenente com bens ou serviços, avaliada e prevista no plano de trabalho."},
+{q:"O que é cronograma de execução em convênio?",r:"É a previsão das etapas e prazos da execução do objeto do convênio."},
+{q:"O que é meta em convênio?",r:"É o resultado a ser alcançado com a execução do objeto, mensurável e previsto no plano de trabalho."},
+{q:"O que é indicador em convênio?",r:"É o parâmetro para medir o alcance das metas do convênio."},
+{q:"O que é avaliação de resultados em convênio?",r:"É a verificação do alcance das metas e da eficácia da parceria."},
+{q:"O que é monitoramento de convênio?",r:"É o acompanhamento contínuo da execução, para identificar desvios e corrigi-los."},
+{q:"O que é fiscalização de convênio?",r:"É a verificação da execução e da aplicação dos recursos pelo concedente."},
+{q:"O que é visita técnica em convênio?",r:"É a verificação in loco da execução do objeto, registrada em relatório."},
+{q:"O que é relatório de execução em convênio?",r:"É o documento que descreve as atividades realizadas e os resultados alcançados."},
+{q:"O que é relatório de cumprimento do objeto?",r:"É o documento que comprova a execução do objeto conforme o plano de trabalho."}
+];
+
+let idx = 0;
+const qEl = document.getElementById('question');
+const aEl = document.getElementById('answer');
+const cEl = document.getElementById('counter');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function render() {
+  qEl.textContent = questoes[idx].q;
+  aEl.textContent = questoes[idx].r;
+  cEl.textContent = (idx + 1) + ' / ' + questoes.length;
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = idx === questoes.length - 1;
+}
+function next() { if (idx < questoes.length - 1) { idx++; render(); } }
+function prev() { if (idx > 0) { idx--; render(); } }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+render();
+</script>
+</body>
+</html>
